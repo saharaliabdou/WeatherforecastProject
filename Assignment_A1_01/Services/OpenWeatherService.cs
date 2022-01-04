@@ -26,7 +26,7 @@ namespace Assignment_A1_01.Services
             response.EnsureSuccessStatusCode();
             WeatherApiData wd = await response.Content.ReadFromJsonAsync<WeatherApiData>();
 
-            //Your Code
+            //Your Code to convert WeatherApiData to Forecast using Linq.
 
             return forecast;
         }
