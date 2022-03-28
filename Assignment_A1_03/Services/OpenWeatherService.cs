@@ -30,10 +30,13 @@ namespace Assignment_A1_03.Services
             var uri = $"https://api.openweathermap.org/data/2.5/forecast?q={City}&units=metric&lang={language}&appid={apiKey}";
 
             Forecast forecast = await ReadWebApiAsync(uri);
+            
+            OnWeatherForecastAvailable($"New weather forecast available for {City} is avialble");
+            //part of your event code here
 
             //part of event and cache code here
             //generate an event with different message if cached data
-            
+
             return forecast;
 
         }
@@ -74,15 +77,12 @@ namespace Assignment_A1_03.Services
         {
             // part of your read web api code here
 
-            // part of your data transformation to Forecast here
-            //generate an event with different message if cached data
-            Forecast forecast = await ReadWebApiAsync(uri);
             HttpResponseMessage response = await httpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             WeatherApiData wd = await response.Content.ReadFromJsonAsync<WeatherApiData>();
 
             //Your Code to convert WeatherApiData to Forecast using Linq.
-            //Forecast forecast = new Forecast();
+            Forecast forecast = new Forecast();
 
             forecast.City = wd.city.name;
 
@@ -90,6 +90,7 @@ namespace Assignment_A1_03.Services
             forecast.Items = new List<ForecastItem>();
 
             wd.list.ForEach(wdListItem => { forecast.Items.Add(GetForecastItem(wdListItem)); });
+
 
             return forecast;
         }
