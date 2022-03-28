@@ -18,7 +18,7 @@ namespace Assignment_A1_01
         {
             double latitude = 59.5086798659495;
             double longitude = 18.2654625932976;
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.ForegroundColor = ConsoleColor.Cyan;
 
 
             //var t1 = new OpenWeatherService().GetForecastAsync(latitude, longitude);
@@ -37,15 +37,15 @@ namespace Assignment_A1_01
             {
                 Forecast forecast = t1.Result;
                 //Console.WriteLine($"Weather forecast for {forecast.City}");
-                table.SetHeaders($"weather Forecast for {forecast.City}");
+                table.SetHeaders($"Weather Forecast for {forecast.City}");
                 var GroupedList = forecast.Items.GroupBy(item => item.DateTime.Date);
-
+                
                 foreach (IGrouping<DateTime, ForecastItem> group in GroupedList)
                 {
                     table.AddRow(group.Key.Date.ToShortDateString());
                     foreach (ForecastItem item in group)
                     {
-                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description},Temperature: {item.Temperature} , Wind: {item.WindSpeed} m/s");
+                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description},Temperature: {item.Temperature} degC, Wind: {item.WindSpeed} m/s");
                     }
                 }
                 Console.WriteLine(table.ToString());

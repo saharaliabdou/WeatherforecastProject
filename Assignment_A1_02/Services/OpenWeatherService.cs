@@ -13,8 +13,9 @@ namespace Assignment_A1_02.Services
 {
     public class OpenWeatherService
     {
+        public EventHandler<string> WeatherForecastAvailable;
         HttpClient httpClient = new HttpClient();
-        readonly string apiKey = ""; // Your API Key
+        readonly string apiKey = "7616850dd80ab0c5df57eb53e6668a2d"; // Your API Key
 
         //part of your event code here
         public async Task<Forecast> GetForecastAsync(string City)
@@ -24,11 +25,15 @@ namespace Assignment_A1_02.Services
             var uri = $"https://api.openweathermap.org/data/2.5/forecast?q={City}&units=metric&lang={language}&appid={apiKey}";
 
             Forecast forecast = await ReadWebApiAsync(uri);
-
+            OnWeatherForecastAvailable($"New weather forecast available for {City} is avialble");
             //part of your event code here
 
             return forecast;
 
+        }
+        protected virtual void OnWeatherForecastAvailable(string s)
+        {
+            WeatherForecastAvailable?.Invoke(this, s);
         }
         public async Task<Forecast> GetForecastAsync(double latitude, double longitude)
         {
@@ -39,7 +44,7 @@ namespace Assignment_A1_02.Services
             Forecast forecast = await ReadWebApiAsync(uri);
 
             //part of your event code here
-
+            OnWeatherForecastAvailable($"New weather forecast available for {longitude}{latitude} is avialble");
             return forecast;
         }
         private async Task<Forecast> ReadWebApiAsync(string uri)
@@ -47,7 +52,35 @@ namespace Assignment_A1_02.Services
             // part of your read web api code here
 
             // part of your data transformation to Forecast here
+
+            HttpResponseMessage response = await httpClient.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            WeatherApiData wd = await response.Content.ReadFromJsonAsync<WeatherApiData>();
+
+            //Your Code to convert WeatherApiData to Forecast using Linq.
+            Forecast forecast = new Forecast();
+
+            forecast.City = wd.city.name;
+
+
+            forecast.Items = new List<ForecastItem>();
+
+            wd.list.ForEach(wdListItem => { forecast.Items.Add(GetForecastItem(wdListItem)); });
+
             return forecast;
+        }
+
+        private ForecastItem GetForecastItem(List wdListItem)
+        {
+
+            ForecastItem item = new ForecastItem();
+            item.DateTime = UnixTimeStampToDateTime(wdListItem.dt);
+
+            item.Temperature = wdListItem.main.temp;
+            item.Description = wdListItem.weather.Count > 0 ? wdListItem.weather.First().description : "No info";
+            item.WindSpeed = wdListItem.wind.speed;
+
+            return item;
         }
         private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {

@@ -20,7 +20,7 @@ namespace Assignment_A1_02
             //Register the event
             OpenWeatherService service = new OpenWeatherService();
             service.WeatherForecastAvailable += ReportWeatherDataAvailable;
-            
+            var table = new Table();
             Task<Forecast> t1 = null, t2 = null;
             Exception exception = null;
             try
@@ -44,16 +44,19 @@ namespace Assignment_A1_02
             if (t1?.Status == TaskStatus.RanToCompletion)
             {
                 Forecast forecast = t1.Result;
-                Console.WriteLine($"Weather forecast for {forecast.City}");
+                //Console.WriteLine($"Weather forecast for {forecast.City}");
+
+                table.SetHeaders($"Weather Forecast for {forecast.City}");
                 var GroupedList = forecast.Items.GroupBy(item => item.DateTime.Date);
                 foreach (var group in GroupedList)
                 {
-                    Console.WriteLine(group.Key.Date.ToShortDateString());
+                    table.AddRow(group.Key.Date.ToShortDateString());
                     foreach (var item in group)
                     {
-                        Console.WriteLine($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
+                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
                     }
                 }
+                Console.WriteLine(table.ToString());
             }
             else
             {
@@ -65,16 +68,19 @@ namespace Assignment_A1_02
             if (t2.Status == TaskStatus.RanToCompletion)
             {
                 Forecast forecast = t2.Result;
-                Console.WriteLine($"Weather forecast for {forecast.City}");
+                //Console.WriteLine($"Weather forecast for {forecast.City}");
+                table.SetHeaders($"Weather Forecast for {forecast.City}");
                 var GroupedList = forecast.Items.GroupBy(item => item.DateTime.Date);
                 foreach (var group in GroupedList)
                 {
-                    Console.WriteLine(group.Key.Date.ToShortDateString());
+                    //Console.WriteLine(group.Key.Date.ToShortDateString());
+                    table.AddRow(group.Key.Date.ToShortDateString());
                     foreach (var item in group)
                     {
-                        Console.WriteLine($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
+                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
                     }
                 }
+                Console.WriteLine(table.ToString());
             }
             else
             {
