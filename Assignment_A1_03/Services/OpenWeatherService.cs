@@ -22,7 +22,7 @@ namespace Assignment_A1_03.Services
 
         // part of your event and cache code here
         ConcurrentDictionary<(string,string), Forecast> _Cache1 = new ConcurrentDictionary<(string,string), Forecast>();
-        ConcurrentDictionary<(double,double), Forecast> _Cache2 = new ConcurrentDictionary<(double,double), Forecast>();
+        ConcurrentDictionary<(string,double,double), Forecast> _Cache2 = new ConcurrentDictionary<(string,double,double), Forecast>();
 
         public EventHandler<string> WeatherForecastAvailable;
 
@@ -47,18 +47,18 @@ namespace Assignment_A1_03.Services
 
                     forecast = await ReadWebApiAsync(uri);
                     _Cache1[key] = forecast;
-                    OnWeatherForecastAvailable($"New weather forecast for {key} available");
+                    OnWeatherForecastAvailable($"New weather forecast for {City} available");
                 }
                 else
-                    OnWeatherForecastAvailable($"Cached weather forecast for {key} available");
-
-
-
-            }
+                    OnWeatherForecastAvailable($"Cached weather forecast for {City} available");
 
             return forecast;
 
         }
+
+           
+
+        
         protected virtual void OnWeatherForecastAvailable(string s)
         {
             WeatherForecastAvailable?.Invoke(this, s);
@@ -67,15 +67,19 @@ namespace Assignment_A1_03.Services
         {
             //part of cache code here
             Forecast forecast = null;
+            var longit = longitude;
+            var latid = latitude;
+            var date1 = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
 
-            if (!_Cache2.TryGetValue((longitude,latitude), out forecast))
+            var key = (date1,longit, latid);
+            if (!_Cache2.TryGetValue(key, out forecast))
             {
 
                 //https://openweathermap.org/current
                 var language = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
                 var uri = $"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&units=metric&lang={language}&appid={apiKey}";
                 forecast = await ReadWebApiAsync(uri);
-                _Cache2[(longitude,latitude)] = forecast;
+                _Cache2[key] = forecast;
                 OnWeatherForecastAvailable($"New weather forecast for {longitude}{latitude}");
 
                 //part of event and cache code here
