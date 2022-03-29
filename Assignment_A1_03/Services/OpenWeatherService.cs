@@ -14,10 +14,15 @@ namespace Assignment_A1_03.Services
 {
     public class OpenWeatherService
     {
+
+
+       
         HttpClient httpClient = new HttpClient();
         readonly string apiKey = "7616850dd80ab0c5df57eb53e6668a2d"; // Your API Key
 
         // part of your event and cache code here
+        ConcurrentDictionary<string, Forecast> _Cache1 = new ConcurrentDictionary<string, Forecast>();
+        ConcurrentDictionary<(double,double), Forecast> _Cache2 = new ConcurrentDictionary<(double,double), Forecast>();
 
         public EventHandler<string> WeatherForecastAvailable;
 
@@ -25,17 +30,26 @@ namespace Assignment_A1_03.Services
         {
             //part of cache code here
 
-            //https://openweathermap.org/current
-            var language = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-            var uri = $"https://api.openweathermap.org/data/2.5/forecast?q={City}&units=metric&lang={language}&appid={apiKey}";
+            Forecast forecast = null;
 
-            Forecast forecast = await ReadWebApiAsync(uri);
-            
-            OnWeatherForecastAvailable($"New weather forecast available for {City} is avialble");
-            //part of your event code here
+           if (!_Cache1.TryGetValue(City, out forecast))
+            {
+                //https://openweathermap.org/current
+                var language = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                var uri = $"https://api.openweathermap.org/data/2.5/forecast?q={City}&units=metric&lang={language}&appid={apiKey}";
 
-            //part of event and cache code here
-            //generate an event with different message if cached data
+
+
+                forecast = await ReadWebApiAsync(uri);
+                _Cache1[City] = forecast;
+                OnWeatherForecastAvailable($"New weather forecast for {City} available");
+            }
+            else
+                OnWeatherForecastAvailable($"Cached weather forecast for {City} available");
+
+
+
+
 
             return forecast;
 
@@ -47,15 +61,26 @@ namespace Assignment_A1_03.Services
         public async Task<Forecast> GetForecastAsync(double latitude, double longitude)
         {
             //part of cache code here
+            Forecast forecast = null;
 
-            //https://openweathermap.org/current
-            var language = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-            var uri = $"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&units=metric&lang={language}&appid={apiKey}";
-            Forecast forecast = await ReadWebApiAsync(uri);
-            OnWeatherForecastAvailable($"New weather forecast for{longitude}{latitude}");
+            if (!_Cache2.TryGetValue((longitude,latitude), out forecast))
+            {
 
-            //part of event and cache code here
-            //generate an event with different message if cached data
+                //https://openweathermap.org/current
+                var language = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                var uri = $"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&units=metric&lang={language}&appid={apiKey}";
+                forecast = await ReadWebApiAsync(uri);
+                _Cache2[(longitude,latitude)] = forecast;
+                OnWeatherForecastAvailable($"New weather forecast for {longitude}{latitude}");
+
+                //part of event and cache code here
+                //generate an event with different message if cached data
+
+            }
+            else
+            {
+                OnWeatherForecastAvailable($"Cached weather forecast for ({longitude} {latitude}) available");
+            }
 
 
             return forecast;

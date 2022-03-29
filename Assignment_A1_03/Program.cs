@@ -57,7 +57,7 @@ namespace Assignment_A1_03
                     Console.WriteLine(group.Key.Date.ToShortDateString());
                     foreach (var item in group)
                     {
-                        Console.WriteLine($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
+                        Console.WriteLine($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, temperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
                     }
                 }
             }
@@ -91,6 +91,8 @@ namespace Assignment_A1_03
         static void ReportWeatherDataAvailable(object sender, string message)
         {
             Console.WriteLine($"Event message from weather service: {message}");
+
+            //skriver ut meddelenda om det är cached
         }
     }
 }
