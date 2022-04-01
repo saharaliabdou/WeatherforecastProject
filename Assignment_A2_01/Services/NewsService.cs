@@ -11,7 +11,7 @@ namespace Assignment_A2_01.Services
     public class NewsService
     {
         HttpClient httpClient = new HttpClient();
-        readonly string apiKey = "7616850dd80ab0c5df57eb53e6668a2d";// "d318329c40734776a014f9d9513e14ae";'
+        readonly string apiKey = "3cf18a22fddb446a81eceb8de3065438";// "d318329c40734776a014f9d9513e14ae";'
 
         public async Task<NewsApiData> GetNewsAsync()
         {
