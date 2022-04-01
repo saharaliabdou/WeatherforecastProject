@@ -34,15 +34,15 @@ namespace Assignment_A2_01.Services
             NewsApiData nd = await response.Content.ReadFromJsonAsync<NewsApiData>();
             //Your Code to convert WeatherApiData to Forecast using Linq.
             NewsApiData newsapidata = new NewsApiData();
-            
+
             newsapidata.Articles = new List<Article>();
 
 
             //newsapidata.Articles = ar.Author.Tolist;
-            
-            
 
-            nd.Articles.ForEach(wdListItem => {newsapidata.Articles.Add(GetNewsArticle(wdListItem)); });
+
+
+            nd.Articles.ForEach(wdListItem => { newsapidata.Articles.Add(GetNewsArticle(wdListItem)); });
 
             return newsapidata;
         }
@@ -57,7 +57,7 @@ namespace Assignment_A2_01.Services
             ////item.Temperature = wdListItem.main.temp;
             ////item.Description = wdListItem.weather.Count > 0 ? wdListItem.weather.First().description : "No info";
             //item.WindSpeed = wdListItem.wind.speed;
-         
+
             return article;
         }
 

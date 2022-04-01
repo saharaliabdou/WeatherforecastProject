@@ -15,18 +15,20 @@ namespace Assignment_A2_02
 
             //Task<NewsApiData> t1 = NewsApiSampleData.GetNewsApiSampleAsync("sports");
 
-            Task<NewsApiData> t1 = service.GetNewsAsync();
+           // Task<NewsApiData> t1 = service.GetNewsAsync();
+            Task<News> t1 = service.GetNewsAsync(NewsCategory.business);
 
             Task.WaitAll(t1);
 
             Console.WriteLine("-----------------");
+            News newsApi = t1.Result;
             if (t1?.Status == TaskStatus.RanToCompletion)
             {
-                NewsApiData newsApi = t1.Result;
+               
                 Console.WriteLine("Top headlines");
                 foreach (var item in newsApi.Articles)
                 {
-                    Console.WriteLine($"{item.Title} {newsApi.Status}");
+                    Console.WriteLine($" -  {item.DateTime.ToString("yyyy-MM-dd HH:mm")}: {item.Title} ");
                 }
 
 
@@ -38,5 +40,5 @@ namespace Assignment_A2_02
 
         }
     }       
-    }
+    
 }
