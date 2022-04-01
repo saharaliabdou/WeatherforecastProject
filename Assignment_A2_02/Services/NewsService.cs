@@ -13,6 +13,7 @@ namespace Assignment_A2_02.Services
 {
     public class NewsService
     {
+        public EventHandler<string> Newsavailable;
         HttpClient httpClient = new HttpClient();
         readonly string apiKey = "3cf18a22fddb446a81eceb8de3065438";
         public async Task<News> GetNewsAsync(NewsCategory category)
@@ -48,14 +49,26 @@ namespace Assignment_A2_02.Services
             //return news;
             //nd.Articles.ForEach(a => news.Articles.Add());
             nd.Articles.ForEach(wdListItem => { news.Articles.Add(GetNewsItem(wdListItem)); });
-            //OnNewsCategoryAvailable($"New weather forecast available for {news.Category} is avialble");
+           
+
+
+
+                OnNewsCategoryAvailable($"News in category is available for : {news.Category} ");
+
+            
+          
+
+            
+
+            
             return news;
         }
 
-        //protected virtual void OnNewsCategoryAvailable(string category)
-        //{
-        //   OnNewsCategoryAvailable?.Invoke(this, category);
-        //}
+        protected virtual void OnNewsCategoryAvailable(string c)
+            
+        {
+            Newsavailable?.Invoke(this, c);
+        }
 
         private NewsItem GetNewsItem(Article wdListItem)
         {

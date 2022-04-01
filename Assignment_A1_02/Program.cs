@@ -53,7 +53,7 @@ namespace Assignment_A1_02
                     table.AddRow(group.Key.Date.ToShortDateString());
                     foreach (var item in group)
                     {
-                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
+                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, temperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
                     }
                 }
                 Console.WriteLine(table.ToString());
@@ -77,7 +77,7 @@ namespace Assignment_A1_02
                     table.AddRow(group.Key.Date.ToShortDateString());
                     foreach (var item in group)
                     {
-                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, teperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
+                        table.AddRow($"   - {item.DateTime.ToShortTimeString()}: {item.Description}, temperature: {item.Temperature} degC, wind: {item.WindSpeed} m/s");
                     }
                 }
                 Console.WriteLine(table.ToString());

@@ -12,32 +12,53 @@ namespace Assignment_A2_02
         static void Main(string[] args)
         {
             NewsService service = new NewsService();
+            service.Newsavailable += ReportNewsDataAvailable;
 
             //Task<NewsApiData> t1 = NewsApiSampleData.GetNewsApiSampleAsync("sports");
 
-           // Task<NewsApiData> t1 = service.GetNewsAsync();
-            Task<News> t1 = service.GetNewsAsync(NewsCategory.business);
+            // Task<NewsApiData> t1 = service.GetNewsAsync();
 
-            Task.WaitAll(t1);
 
+           
             Console.WriteLine("-----------------");
-            News newsApi = t1.Result;
-            if (t1?.Status == TaskStatus.RanToCompletion)
+
+            for (NewsCategory i = NewsCategory.business; i < NewsCategory.technology + 1; i++)
             {
-               
-                Console.WriteLine("Top headlines");
-                foreach (var item in newsApi.Articles)
+
+
+                Task<News> t1 = service.GetNewsAsync(i);
+
+                Task.WaitAll(t1);
+
+
+
+
+                if (t1?.Status == TaskStatus.RanToCompletion)
                 {
-                    Console.WriteLine($" -  {item.DateTime.ToString("yyyy-MM-dd HH:mm")}: {item.Title} ");
+                    
+                    News newsApi = t1.Result;
+                    
+                    Console.WriteLine($"Top headline for {i}");
+                    Console.WriteLine();
+                    foreach (var item in newsApi.Articles)
+                    {
+                        Console.WriteLine($" -  {item.DateTime.ToString("yyyy-MM-dd HH:mm")}: {item.Title} ");
+                    }
+                    Console.WriteLine();
+
+                }
+                else
+                {
+                    Console.WriteLine($"Geolocation news service error.");
                 }
 
-
             }
-            else
+            static void ReportNewsDataAvailable(object sender, string message)
             {
-                Console.WriteLine($"Geolocation news service error.");
-            }
+                Console.WriteLine($"Event message from News service: {message}");
 
+                //skriver ut meddelenda om det är cached
+            }
         }
     }       
     
