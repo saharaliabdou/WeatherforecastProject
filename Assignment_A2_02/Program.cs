@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using Assignment_A2_02.Models;
+﻿using Assignment_A2_02.Models;
 using Assignment_A2_02.Services;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Assignment_A2_02
 {
@@ -12,54 +11,54 @@ namespace Assignment_A2_02
         static void Main(string[] args)
         {
             NewsService service = new NewsService();
+
             service.Newsavailable += ReportNewsDataAvailable;
+            Task<News> t1 = null;
+            Exception exception = null;
 
-            //Task<NewsApiData> t1 = NewsApiSampleData.GetNewsApiSampleAsync("sports");
-
-            // Task<NewsApiData> t1 = service.GetNewsAsync();
-
-
-           
-            Console.WriteLine("-----------------");
-
-            for (NewsCategory i = NewsCategory.business; i < NewsCategory.technology + 1; i++)
+            try
             {
+                for (NewsCategory i = NewsCategory.business; i < NewsCategory.technology + 1; i++)
+                {
+                    t1 = service.GetNewsAsync(i);
 
-
-                Task<News> t1 = service.GetNewsAsync(i);
-
+                }
                 Task.WaitAll(t1);
 
-
-
-
+            }
+            catch (Exception ex)
+            {
+                //if exception write the message later
+                exception = ex;
+            }
+            Console.WriteLine();
+            Console.WriteLine("---------------------------");
+            Console.WriteLine();
+            for (NewsCategory i = NewsCategory.business; i < NewsCategory.technology + 1; i++)
+            {
+                //t2 = service.GetNewsAsync(i);
+                Console.WriteLine();
+                Console.WriteLine($"News in Category {i}");
+                Console.WriteLine();
                 if (t1?.Status == TaskStatus.RanToCompletion)
                 {
-                    
-                    News newsApi = t1.Result;
-                    
-                    Console.WriteLine($"Top headline for {i}");
-                    Console.WriteLine();
-                    foreach (var item in newsApi.Articles)
-                    {
-                        Console.WriteLine($" -  {item.DateTime.ToString("yyyy-MM-dd HH:mm")}: {item.Title} ");
-                    }
-                    Console.WriteLine();
+                    News news = t1.Result;
+
+                    news.Articles.ForEach(a => Console.WriteLine($" - {a.DateTime.ToString("yyyy-MM-dd HH:mm-ss")}\t: {a.Title}"));
 
                 }
                 else
                 {
-                    Console.WriteLine($"Geolocation news service error.");
+                    Console.WriteLine($"Geolocation News service error.");
                 }
 
             }
-            static void ReportNewsDataAvailable(object sender, string message)
-            {
-                Console.WriteLine($"Event message from News service: {message}");
 
-                //skriver ut meddelenda om det är cached
-            }
+
         }
-    }       
-    
+        static void ReportNewsDataAvailable(object sender, string message)
+        {
+            Console.WriteLine($"Event message from news service: {message}");
+        }
+    }
 }
